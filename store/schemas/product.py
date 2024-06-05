@@ -33,5 +33,5 @@ class ProductUpdate(BaseSchemaMixin):
     status: Optional[bool] = Field(None, description="Product status")
 
 
-class ProductUpdateOut(ProductOut, OutSchema):
+class ProductUpdateOut(ProductOut):
     ...
