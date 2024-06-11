@@ -32,7 +32,7 @@ async def test_usecases_get_should_return_not_found():
 
 @pytest.mark.usefixtures("products_inserted")
 async def test_usecases_query_should_return_success():
-    result = await product_usecase.query()
+    result = await product_usecase.query(apply_filter=False)
 
     assert isinstance(result, List)
     assert len(result) > 1
@@ -43,6 +43,18 @@ async def test_usecases_update_should_return_success(product_inserted, product_u
     result = await product_usecase.update(id=product_inserted.id, body=product_up)
 
     assert isinstance(result, ProductUpdateOut)
+
+
+async def test_usecases_update_should_return_not_found(product_up, product_inserted):
+    product_inserted.id = UUID("c9952620-5412-4d5d-8e32-ff717c361000")
+
+    with pytest.raises(NotFoundException) as err:
+        await product_usecase.update(id=product_inserted.id, body=product_up)
+
+    assert (
+        err.value.message
+        == "Product not found with filter: c9952620-5412-4d5d-8e32-ff717c361000"
+    )
 
 
 async def test_usecases_delete_should_return_success(product_inserted):
